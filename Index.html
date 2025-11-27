@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORTFOLIO | Minimalist</title>
+    <style>
+        /* --- 基础设置 --- */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --accent-color: #000000;
+            --spacing-unit: 20px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* 极简风格首选字体 */
+            font-weight: 400;
+            line-height: 1.6;
+            scroll-behavior: smooth; /* 平滑滚动 */
+        }
+
+        /* --- 导航栏 --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 40px 60px; /* 大留白 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background-color: rgba(255, 255, 255, 0.9); /* 轻微透明背景 */
+            backdrop-filter: blur(5px);
+        }
+
+        /* Logo 样式 */
+        .logo-container {
+            cursor: pointer;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background-color: #000;
+            border-radius: 50%;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* 弹性贝塞尔曲线 */
+        }
+
+        .logo-container:hover .logo {
+            transform: scale(1.2); /* 悬停放大 */
+        }
+
+        .logo-container:active .logo {
+            transform: scale(0.9); /* 点击缩小 */
+        }
+
+        /* 导航链接 */
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 40px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            padding-bottom: 5px;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+
+        nav a:hover {
+            opacity: 0.6;
+        }
+
+        /* 选中状态（下划线动画） */
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--text-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a.active::after {
+            width: 100%;
+        }
+
+        /* --- 主要内容区 --- */
+        main {
+            padding-top: 150px; /* 避开固定导航栏 */
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+
+        section {
+            margin-bottom: 150px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1, h2 {
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 20px;
+            display: inline-block;
+            min-width: 200px;
+        }
+        
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 1.5rem; }
+
+        /* About Section */
+        #about p {
+            max-width: 600px;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Design Work Grid */
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .work-item {
+            cursor: pointer;
+        }
+
+        .work-image {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background-color: #f0f0f0;
+            margin-bottom: 15px;
+            transition: filter 0.3s;
+            /* 占位符图片样式 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+            font-size: 2rem;
+        }
+
+        .work-item:hover .work-image {
+            filter: brightness(0.9);
+        }
+
+        .work-title {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .work-meta {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* CV Section */
+        .cv-item {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .cv-year {
+            font-weight: 600;
+        }
+
+        .cv-details h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .cv-details p {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        /* --- 底部 (水面效果) --- */
+        footer {
+            position: relative;
+            width: 100%;
+            height: 400px; /* 固定高度 */
+            margin-top: 100px;
+            overflow: hidden;
+            /* 顶部边框作为分割线 */
+            border-top: 1px solid #eee;
+        }
+
+        #water-instructions {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            header { padding: 20px; }
+            nav ul { gap: 20px; }
+            main { padding-left: 20px; padding-right: 20px; }
+            .cv-item { grid-template-columns: 1fr; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部导航 -->
+    <header>
+        <div class="logo-container" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+            <div class="logo"></div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#design-work" class="nav-link">Design Work</a></li>
+                <li><a href="#cv" class="nav-link">CV</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 主要内容 -->
+    <main>
+        <!-- 简介部分 -->
+        <section id="about">
+            <h2>About</h2>
+            <p>你好，我是 LHX。一名追求极简美学的数字设计师。</p>
+            <p>我热衷于探索互动媒体与视觉传达的边界。我相信好的设计不仅是视觉上的享受，更是情感上的共鸣</p>
+        </section>
+
+        <!-- 作品集部分 -->
+        <section id="design-work">
+            <h2>Design Work</h2>
+            <div class="work-grid">
+                <!-- 作品 1 -->
+                <div class="work-item">
+                    <div class="work-image">Project A</div>
+                    <div class="work-title">The Void</div>
+                    <div class="work-meta">Digital Art / 2024</div>
+                </div>
+                <!-- 作品 2 -->
+                <div class="work-item">
+                    <div class="work-image">Project B</div>
+                    <div class="work-title">Echoes</div>
+                    <div class="work-meta">Installation / 2023</div>
+                </div>
+                <!-- 作品 3 -->
+                <div class="work-item">
+                    <div class="work-image">Project C</div>
+                    <div class="work-title">Silent Noise</div>
+                    <div class="work-meta">Photography / 2023</div>
+                </div>
+                <!-- 作品 4 -->
+                <div class="work-item">
+                    <div class="work-image">Project D</div>
+                    <div class="work-title">Structure</div>
+                    <div class="work-meta">3D Modeling / 2022</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 简历部分 -->
+        <section id="cv">
+            <h2>CV</h2>
+            <div class="cv-item">
+                <div class="cv-year">2023 - Present</div>
+                <div class="cv-details">
+                    <h3>Senior Visual Designer</h3>
+                    <p>Creative Studio X, Shanghai</p>
+                </div>
+            </div>
+            <div class="cv-item">
+                <div class="cv-year">2021 - 2023</div>
+                <div class="cv-details">
+                    <h3>Interaction Design Intern</h3>
+                    <p>Global Tech Inc., Beijing</p>
+                </div>
+            </div>
+            <div class="cv-item">
+                <div class="cv-year">2017 - 2021</div>
+                <div class="cv-details">
+                    <h3>BA in Visual Communication</h3>
+                    <p>Academy of Arts & Design</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部水面模拟 -->
+    <footer>
+        <div id="water-instructions">Interactive Footer</div>
+        <canvas id="waterCanvas"></canvas>
+    </footer>
+
+<script>
+    /* =========================================
+       1. 网站交互逻辑 (滚动监听与导航)
+       ========================================= */
+    
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    // 修复：添加点击事件拦截，实现精确平滑滚动
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault(); // 阻止默认的锚点跳转行为
+            const targetId = link.getAttribute('href').substring(1);
+            const targetSection = document.getElementById(targetId);
+            
+            if (targetSection) {
+                // 计算 header 高度作为偏移量 (120px 左右)
+                const headerOffset = 120;
+                const elementPosition = targetSection.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
+            }
+        });
+    });
+
+    // 监听滚动以高亮导航
+    window.addEventListener('scroll', () => {
+        let current = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            // 调整触发判定的偏移量，使其与点击滚动的偏移量大致匹配
+            if (scrollY >= (sectionTop - 200)) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').includes(current)) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+    // Intersection Observer 用于元素进入视口时的淡入动画
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+
+
+    /* =========================================
+       2. 水体模拟逻辑 (从之前的代码移植并适配 Footer)
+       ========================================= */
+    
+    const SETTINGS = {
+        springCount: 0,      
+        springSpacing: 10,   
+        spreadIterations: 5, 
+        tension: 0.020,      
+        damping: 0.05,       
+        spread: 0.3,         
+        waterLevelRatio: 0.6, // 修改：在 Footer 容器中，水面位置稍微偏下一点
+        waterColor: '#000000', 
+        splashForce: 150,     
+    };
+
+    let canvas, ctx;
+    let width, height;
+    let springs = [];
+    let bottle;
+    
+    const mouse = { x: 0, y: 0, speed: 0, active: false };
+    let prevMouse = { x: 0, y: 0 };
+
+    // --- 类定义 ---
+
+    class Spring {
+        constructor(x, targetY) {
+            this.x = x;             
+            this.targetY = targetY; 
+            this.height = targetY;  
+            this.velocity = 0;      
+        }
+
+        update() {
+            const displacement = this.targetY - this.height;
+            this.velocity += SETTINGS.tension * displacement;
+            this.velocity -= this.velocity * SETTINGS.damping;
+            this.height += this.velocity;
+        }
+    }
+
+    class Bottle {
+        constructor(x) {
+            this.x = x;
+            this.y = 0;
+            this.vy = 0; 
+            this.angle = 0;
+            this.va = 0; 
+        }
+
+        update() {
+            let index = Math.round(this.x / SETTINGS.springSpacing);
+            if (index < 0) index = 0;
+            if (index >= springs.length) index = springs.length - 1;
+
+            const waterHeight = springs[index].height;
+            const targetY = waterHeight + 5; 
+            const displacementY = targetY - this.y;
+            
+            const buoyancyStiffness = 0.025; 
+            const buoyancyDamping = 0.10;    
+
+            this.vy += displacementY * buoyancyStiffness;
+            this.vy -= this.vy * buoyancyDamping; 
+            this.y += this.vy;
+
+            const sampleOffset = 5; 
+            let leftIndex = index - sampleOffset;
+            let rightIndex = index + sampleOffset;
+
+            if (leftIndex < 0) leftIndex = 0;
+            if (rightIndex >= springs.length) rightIndex = springs.length - 1;
+
+            const leftY = springs[leftIndex].height;
+            const rightY = springs[rightIndex].height;
+            const dist = (rightIndex - leftIndex) * SETTINGS.springSpacing;
+
+            const targetAngle = Math.atan2(rightY - leftY, dist);
+            const displacementAngle = targetAngle - this.angle;
+
+            const angularStiffness = 0.015;  
+            const angularDamping = 0.08;     
+
+            this.va += displacementAngle * angularStiffness;
+            this.va -= this.va * angularDamping;
+            this.angle += this.va;
+        }
+
+        draw(ctx) {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.angle);
+
+            // 瓶身
+            ctx.strokeStyle = '#000000'; 
+            ctx.lineWidth = 1.5;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; 
+
+            ctx.beginPath();
+            const w = 18; 
+            const h = 30; 
+            const neckW = 7; 
+            const neckH = 22; 
+
+            ctx.moveTo(-neckW, -h - neckH); 
+            ctx.lineTo(neckW, -h - neckH); 
+            ctx.lineTo(neckW, -h);         
+            ctx.quadraticCurveTo(w, -h, w, 0); 
+            ctx.lineTo(w, h);              
+            ctx.quadraticCurveTo(0, h + 8, -w, h); 
+            ctx.lineTo(-w, 0);             
+            ctx.quadraticCurveTo(-w, -h, -neckW, -h); 
+            ctx.lineTo(-neckW, -h - neckH); 
+
+            ctx.fill();
+            ctx.stroke();
+
+            // 木塞
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(-neckW + 1, -h - neckH - 5, (neckW * 2) - 2, 5);
+
+            // 信纸
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(-6, -5);
+            ctx.lineTo(6, -2);
+            ctx.lineTo(4, 15);
+            ctx.lineTo(-8, 12);
+            ctx.closePath();
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(-6, 4);
+            ctx.lineTo(6, 6);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+    }
+
+    // --- 主逻辑 ---
+
+    function initWater() {
+        canvas = document.getElementById('waterCanvas');
+        ctx = canvas.getContext('2d');
+        
+        window.addEventListener('resize', resizeWater);
+        
+        // 注意：这里需要绑定到 canvas 上，而不是整个 window
+        canvas.addEventListener('mousemove', handleInput);
+        canvas.addEventListener('mousedown', handleInputClick);
+        canvas.addEventListener('touchmove', handleTouch, { passive: false });
+        canvas.addEventListener('touchstart', handleTouchClick, { passive: false });
+
+        resizeWater();
+        animateWater();
+    }
+
+    function resizeWater() {
+        // 修改：获取父容器（footer）的尺寸，而不是 window
+        const footer = document.querySelector('footer');
+        width = footer.clientWidth;
+        height = footer.clientHeight;
+        
+        canvas.width = width;
+        canvas.height = height;
+
+        createSprings();
+
+        if (!bottle) {
+            bottle = new Bottle(width / 2);
+        } else {
+            // 保持瓶子在相对位置，或者重置到中间
+            bottle.x = width / 2;
+        }
+    }
+
+    function createSprings() {
+        springs = [];
+        const waterY = height * SETTINGS.waterLevelRatio;
+        const count = Math.ceil(width / SETTINGS.springSpacing) + 1;
+        
+        for (let i = 0; i < count; i++) {
+            springs.push(new Spring(i * SETTINGS.springSpacing, waterY));
+        }
+    }
+
+    function handleInput(e) {
+        // 重要修改：获取 Canvas 在页面中的绝对位置
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+
+        let vy = mouse.y - prevMouse.y;
+        mouse.speed = vy;
+
+        // 安全检查
+        if (!springs || springs.length === 0) return;
+
+        let index = Math.round(mouse.x / SETTINGS.springSpacing);
+        if (index < 0) index = 0;
+        if (index >= springs.length) index = springs.length - 1;
+
+        const currentSurfaceY = springs[index].height;
+        const isTouching = mouse.y >= currentSurfaceY - 10;
+
+        if (isTouching) {
+            if (vy > 0) {
+                splashAt(mouse.x, vy * 2); 
+            }
+        }
+
+        prevMouse.x = mouse.x;
+        prevMouse.y = mouse.y;
+    }
+
+    function handleInputClick(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        if (!springs || springs.length === 0) return;
+
+        let index = Math.round(x / SETTINGS.springSpacing);
+        if (index < 0) index = 0;
+        if (index >= springs.length) index = springs.length - 1;
+
+        const currentSurfaceY = springs[index].height;
+
+        if (y >= currentSurfaceY - 20) {
+            splashAt(x, 150); 
+        }
+    }
+
+    function handleTouch(e) {
+        e.preventDefault(); 
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        const x = touch.clientX - rect.left;
+        const y = touch.clientY - rect.top;
+        
+        let vy = y - prevMouse.y;
+
+        if (!springs || springs.length === 0) return;
+
+        let index = Math.round(x / SETTINGS.springSpacing);
+        if (index < 0) index = 0;
+        if (index >= springs.length) index = springs.length - 1;
+        const currentSurfaceY = springs[index].height;
+        
+        const isTouching = y >= currentSurfaceY - 10;
+
+        if (isTouching) {
+            if (vy > 0) {
+                 splashAt(x, vy * 3);
+            }
+        }
+        
+        prevMouse.x = x;
+        prevMouse.y = y;
+    }
+
+    function handleTouchClick(e) {
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        prevMouse.x = touch.clientX - rect.left;
+        prevMouse.y = touch.clientY - rect.top;
+    }
+
+    function splashAt(x, speed) {
+        let index = Math.round(x / SETTINGS.springSpacing);
+        
+        if (index >= 0 && index < springs.length) {
+            if (Math.abs(speed) > 1) {
+                springs[index].velocity += speed;
+            }
+        }
+    }
+
+    function updatePhysics() {
+        for (let i = 0; i < springs.length; i++) {
+            springs[i].update();
+        }
+
+        const leftDeltas = new Array(springs.length).fill(0);
+        const rightDeltas = new Array(springs.length).fill(0);
+
+        for (let j = 0; j < SETTINGS.spreadIterations; j++) {
+            for (let i = 0; i < springs.length; i++) {
+                if (i > 0) {
+                    leftDeltas[i] = SETTINGS.spread * (springs[i].height - springs[i - 1].height);
+                    springs[i - 1].velocity += leftDeltas[i];
+                }
+                if (i < springs.length - 1) {
+                    rightDeltas[i] = SETTINGS.spread * (springs[i].height - springs[i + 1].height);
+                    springs[i + 1].velocity += rightDeltas[i];
+                }
+            }
+
+            for (let i = 0; i < springs.length; i++) {
+                if (i > 0) {
+                    springs[i - 1].height += leftDeltas[i];
+                }
+                if (i < springs.length - 1) {
+                    springs[i + 1].height += rightDeltas[i];
+                }
+            }
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, width, height);
+
+        // 绘制水体 (黑色)
+        ctx.fillStyle = SETTINGS.waterColor;
+        ctx.beginPath();
+        // 确保从底部左角开始
+        ctx.moveTo(0, height); 
+        ctx.lineTo(springs[0].x, springs[0].height); 
+
+        for (let i = 0; i < springs.length - 1; i++) {
+            const p1 = springs[i + 1];
+            ctx.lineTo(p1.x, p1.height);
+        }
+
+        // 到右下角，再闭合到左下角
+        ctx.lineTo(width, height); 
+        ctx.lineTo(0, height); 
+        ctx.fill();
+
+        // 绘制漂流瓶
+        if (bottle) {
+            bottle.update();
+            bottle.draw(ctx);
+        }
+    }
+
+    function animateWater() {
+        updatePhysics();
+        draw();
+        requestAnimationFrame(animateWater);
+    }
+
+    // 初始化
+    // 确保页面加载完毕后再初始化 canvas，以免尺寸计算错误
+    window.onload = function() {
+        initWater();
+    };
+
+</script>
+</body>
+</html>
